@@ -1,6 +1,6 @@
-[![Build](https://img.shields.io/github/workflow/status/tg44/nicehash-exporter/ci)](https://github.com/tg44/nicehash-exporter/actions/workflows/build-and-publish.yaml)
-[![DockerImage](https://img.shields.io/badge/docker-latest-brightgreen?style=flat-square)](https://github.com/tg44/nicehash-exporter/pkgs/container/nicehash-exporter)
-[![Docker Hub](https://img.shields.io/badge/docker_hub-latest-brightgreen?style=flat-square)](https://hub.docker.com/r/tg44/nicehash-exporter)
+[![Build](https://img.shields.io/github/workflow/status/serggend/nicehash-exporter/ci)](https://github.com/serggend/nicehash-exporter/actions/workflows/build-and-publish.yaml)
+[![DockerImage](https://img.shields.io/badge/docker-latest-brightgreen?style=flat-square)](https://github.com/serggend/nicehash-exporter/pkgs/container/nicehash-exporter)
+[![Docker Hub](https://img.shields.io/badge/docker_hub-latest-brightgreen?style=flat-square)](https://hub.docker.com/r/serggend/nicehash-exporter)
 
 
 # NiceHash exporter
@@ -18,14 +18,14 @@ You can reach the metrics on `localhost:3000/metrics`.
 ### Docker and compose
 For docker you can run;
 ```
-docker run -e NH_API_KEY="key" -e NH_API_SECRET="secret" -e NH_API_ORG_ID="orgId" ghcr.io/tg44/nicehash-exporter
+docker run -e NH_API_KEY="key" -e NH_API_SECRET="secret" -e NH_API_ORG_ID="orgId" ghcr.io/serggend/nicehash-exporter
 ```
 For docker compose;
 ```
 version: '3.1'
 services:
   nicehash-exporter:
-    image: ghcr.io/tg44/nicehash-exporter
+    image: ghcr.io/serggend/nicehash-exporter
     restart: unless-stopped
     environment:
       - NH_API_KEY=key
