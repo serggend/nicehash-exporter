@@ -92,12 +92,21 @@ const devicePower = new Gauge({
   help: 'devicePower',
   labelNames: ['rig_name', 'device_name', 'device_id', 'device_type'],
 });
+const rigSpeed = new Gauge({
+  name: prefix +'rig_speed',
+  help: 'rigSpeed',
+  labelNames: ['rig_name', 'device_status', 'algo'],
+});
 const deviceSpeed = new Gauge({
   name: prefix +'device_speed',
   help: 'deviceSpeed',
   labelNames: ['rig_name', 'device_name', 'device_id', 'device_type', 'algo', 'suffix'],
 });
-
+const deviceProfitability = new Gauge({
+  name: prefix +'device_profitability',
+  help: 'deviceProfitability',
+  labelNames: ['rig_name', 'device_status', 'algo'],
+});
 const rigStatusTime = new Gauge({
   name: prefix +'rig_status_time',
   help: 'rigStatusTime',
@@ -125,6 +134,8 @@ async function refreshMetrics() {
   devicePower.reset()
   deviceStatusInfo.reset()
   deviceSpeed.reset()
+  rigSpeed.reset()
+  deviceProfitability.reset()
   try {
     const rawResponse = await nhClient.getMiningRigs()
     const data = rawResponse.data
@@ -137,6 +148,7 @@ async function refreshMetrics() {
     Object.keys(data.minerStatuses).forEach(k => minerStatuses.labels(k).set(data.minerStatuses[k]))
     Object.keys(data.devicesStatuses).forEach(k => devicesStatuses.labels(k).set(data.devicesStatuses[k]))
     data.miningRigs.forEach(rig => {
+      //console.log(rig)
       rigStatusTime.labels(rig.name, rig.rigId).set(rig.statusTime)
       try {
         rigJoinTime.labels(rig.name, rig.rigId).set(rig.joinTime)
@@ -155,6 +167,17 @@ async function refreshMetrics() {
           console.log("there was an error parsing " + JSON.stringify(device) + " with ", e)
         }
       })
+      ;
+      (rig.stats || []).forEach(stat => {
+        try {
+         rigSpeed.labels(rig.name, rig.minerStatus, stat.algorithm.enumName).set(stat.speedAccepted)
+         deviceProfitability.labels(rig.name, rig.minerStatus, stat.algorithm.enumName).set(rig.profitability)
+         // console.log(rig.name)
+         // console.log(stat)
+        } catch (e) {
+          console.log("there was an error parsing " + JSON.stringify(stat) + " with ", e)
+        }
+     })
     })
   } catch (e) {
     console.log("there was an error on request1 ", e)
@@ -167,7 +190,7 @@ async function refreshMetrics() {
     totalBtc.set(+data2.total.totalBalance)
     //fiatRate.set(data2.totalBalance)
   } catch (e) {
-    console.log("there was an error on request2 ", e)
+//    console.log("there was an error on request2 ", e)
   }
 
   try {
